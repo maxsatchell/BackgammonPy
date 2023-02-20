@@ -8,6 +8,7 @@ class Colours(Enum):
     BLACK = 2
     EMPTY = 3
 
+#Testing the crossover
 
 def roll_dice():
     dice = random.randint(1,6)
@@ -177,9 +178,9 @@ class Board:
         locations[13] = Location(0, Colours.EMPTY)
         locations[14] = Location(0, Colours.EMPTY)
         locations[15] = Location(0, Colours.EMPTY)
-        locations[16] = Location(3, Colours.WHITE)
+        locations[16] = Location(4, Colours.WHITE)
         locations[17] = Location(0, Colours.EMPTY)
-        locations[18] = Location(5, Colours.WHITE)
+        locations[18] = Location(4, Colours.WHITE)
         locations[19] = Location(0, Colours.EMPTY)
         locations[20] = Location(0, Colours.EMPTY)
         locations[21] = Location(0, Colours.EMPTY)
