@@ -1,3 +1,4 @@
+import copy
 import random
 
 from enum import Enum
@@ -92,8 +93,7 @@ class Player:
 
 class Board:
 
-    def __init__(self,locations,dice):
-        self.dice = dice
+    def __init__(self,locations):
         self.locations = locations
 
     def starting_board():
@@ -283,6 +283,19 @@ class Board:
                 return valid_moves
         # Might have to add an extra return in here
 
+    def generate_valid_board_states(self,colour,dice_value):
+        current_board_locations = copy.deepcopy(self.locations)
+        current_board_locations_2 = copy.deepcopy(self.locations)
+        game_board_generator = Board(current_board_locations)
+        game_board_changer = Board(current_board_locations_2)
+        valid_moves = self.valid_moves(colour,dice_value)
+        board_states = []
+        for i in range(0, len(valid_moves)):
+            game_board_changer.execute_move(colour,valid_moves[i],dice_value)
+            board_states.append(game_board_changer)
+            game_board_changer = copy.deepcopy(game_board_generator)
+        return board_states
+
     def execute_move(self,colour, piece_location, dice_value):
         if self.game_finished():
             return
@@ -448,7 +461,7 @@ class Board:
 
 class Program:
     def main_runner():
-        game_board = Board(Board.end_board_test(), 0)
+        game_board = Board(Board.end_board_test())
         player1 = Player(Colours.WHITE,"Max",game_board)
         player2 = Player(Colours.BLACK,"Black",game_board)
         game = Game(player1, player2, player2, game_board)
@@ -546,6 +559,11 @@ class Game:
             return
         roll1 = roll_dice()
         roll2 = roll_dice()
+
+        copy_board = copy.deepcopy(self.board)
+        copy_current_player = copy.deepcopy(self.current_player.colour)
+
+        board_states = copy_board.generate_valid_board_states(copy_current_player,roll1)
 
         if len(self.board.valid_moves(self.current_player.colour, roll1)) == 0 and len(self.board.valid_moves(self.current_player.colour, roll2)) == 0:
             print("No valid moves for " + self.current_player.name)
