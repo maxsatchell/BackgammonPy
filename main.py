@@ -105,7 +105,6 @@ class Board:
 
     def __init__(self, locations):
         self.locations = locations
-        self.board_history = []
 
     def __eq__(self, other):
         return self.locations == other.locations
@@ -712,6 +711,29 @@ class Board:
         df = pd.DataFrame([board_list])
         return df
 
+    def convert_to_pd_with_winner(self,winner):
+        list_of_pieces = []
+        list_of_colours = []
+        list_winner = [winner]
+
+        for i in range(0,24):
+            list_of_pieces.append(self.locations[i].number)
+            list_of_colours.append(self.locations[i].colour.value)
+
+        list_of_pieces.append(self.locations[40].number)
+        list_of_colours.append(self.locations[40].colour.value)
+        list_of_pieces.append(self.locations[41].number)
+        list_of_colours.append(self.locations[41].colour.value)
+        list_of_pieces.append(self.locations[50].number)
+        list_of_colours.append(self.locations[50].colour.value)
+        list_of_pieces.append(self.locations[51].number)
+        list_of_colours.append(self.locations[51].colour.value)
+
+        board_list = np.array(list_winner + list_of_pieces + list_of_colours)
+        df = pd.DataFrame([board_list])
+        return df
+
+
     #def convert_from_df_to_board(self,df):
 
 
@@ -723,19 +745,34 @@ class Board:
 
 class Program:
     def run_one_game():
-        game_board = Board(Board.starting_board())
+        game_board = Board(Board.end_board_test_2())
         player1 = Player(Colours.WHITE, "Max", game_board)
         player2 = Player(Colours.BLACK, "Black", game_board)
         game = Game(player1, player2, player2, game_board)
         backgammonModel = BackgammonModel(56,2,10,32)
+        board_history = []
         Program.board_outputter(game.board)
+        starting_board = copy.deepcopy(game.board)
         while not game.board.game_finished():
             game.run_neural_network(1,backgammonModel)
+            board_history.append(game.board)
 
         if game.board.locations[50].number == 15:
+            df = starting_board.convert_to_pd_with_winner(1)
+            Program.write_history_to_file(1,board_history,df)
             print("Game is finished the winner is Black")
         else:
+            df = starting_board.convert_to_pd_with_winner(-1)
+            Program.write_history_to_file(-1,board_history,df)
             print("Game is finished the winner is White")
+
+    def write_history_to_file(winner,board_history,df):
+        for move in board_history:
+            check = move.convert_to_pd_with_winner(winner)
+            df = df.append(check)
+
+        df.to_csv('game_history.csv', mode='a', index=False, header=False)
+
 
     def board_outputter(current_board):
         print("---------------------------------------")
