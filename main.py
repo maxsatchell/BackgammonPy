@@ -242,7 +242,7 @@ class Board:
         locations = {}
         locations[0] = Location(0, Colours.EMPTY)
         locations[1] = Location(1, Colours.BLACK)
-        locations[2] = Location(0, Colours.EMPTY)
+        locations[2] = Location(1, Colours.BLACK)
         locations[3] = Location(0, Colours.EMPTY)
         locations[4] = Location(0, Colours.EMPTY)
         locations[5] = Location(0, Colours.EMPTY)
@@ -266,7 +266,7 @@ class Board:
         locations[23] = Location(0, Colours.EMPTY)
         locations[40] = Location(0, Colours.EMPTY)  # where exposed pieces go(black)
         locations[41] = Location(0, Colours.EMPTY)  # where exposed pieces go(white)
-        locations[50] = Location(14, Colours.BLACK)  # Where black pieces are taken off the board in end game
+        locations[50] = Location(13, Colours.BLACK)  # Where black pieces are taken off the board in end game
         locations[51] = Location(0, Colours.EMPTY)  # Where white pieces are taken off the board in end game
         return locations
 
@@ -362,6 +362,20 @@ class Board:
                 return valid_moves
         # Might have to add an extra return in here
 
+    def generate_valid_board_moves_after_one_move(self,colour,roll):
+        current_board_locations = copy.deepcopy(self.locations)
+        current_board_locations_2 = copy.deepcopy(self.locations)
+        game_board_generator = Board(current_board_locations)
+        game_board_changer = Board(current_board_locations_2)
+        board_states = []
+        valid_moves = game_board_generator.valid_moves(colour, roll)
+        for i in range(0,len(valid_moves)):
+            game_board_changer.execute_move(colour, valid_moves[i], roll)
+            board_states.append(game_board_changer)
+            game_board_changer = copy.deepcopy(game_board_generator)
+
+
+
     def generate_valid_board_states_after_both_moves_double(self, colour, roll_1, roll_2, double_board_states):
         current_board_locations = copy.deepcopy(double_board_states.locations)
         current_board_locations_2 = copy.deepcopy(double_board_states.locations)
@@ -376,17 +390,18 @@ class Board:
             valid_moves_roll2 = game_board_changer.valid_moves(colour, roll_2)
             for j in range(0, len(valid_moves_roll2)):
                 game_board_changer.execute_move(colour, valid_moves_roll2[j], roll_2)
-                if len(board_states) > 0:
-                    for g in range(len(board_states)):
-                        if not (DeepDiff(board_states[g], game_board_changer)):
-                            game_board_changer = copy.deepcopy(game_board_changer_holder)
-                            continue
-
-                    board_states.append(game_board_changer)
-                    game_board_changer = copy.deepcopy(game_board_changer_holder)
-                else:
-                    board_states.append(game_board_changer)
-                    game_board_changer = copy.deepcopy(game_board_changer_holder)
+                # if len(board_states) > 0:
+                #     for g in range(len(board_states)):
+                #         if not (DeepDiff(board_states[g], game_board_changer)):
+                #             game_board_changer = copy.deepcopy(game_board_changer_holder)
+                #             continue
+                #
+                #     if (DeepDiff(game_board_changer_holder, game_board_changer)):
+                #         board_states.append(game_board_changer)
+                #         game_board_changer = copy.deepcopy(game_board_changer_holder)
+                # else:
+                board_states.append(game_board_changer)
+                game_board_changer = copy.deepcopy(game_board_changer_holder)
             one_roll_board_states.append(game_board_changer_holder)
             game_board_changer = copy.deepcopy(game_board_generator)
 
@@ -398,17 +413,18 @@ class Board:
             valid_moves_roll1 = game_board_changer.valid_moves(colour, roll_1)
             for j in range(0, len(valid_moves_roll1)):
                 game_board_changer.execute_move(colour, valid_moves_roll1[j], roll_1)
-                if len(board_states) > 0:
-                    for g in range(len(board_states)):
-                        check = DeepDiff(board_states[g], game_board_changer)
-                        if not (DeepDiff(board_states[g], game_board_changer)):
-                            game_board_changer = copy.deepcopy(game_board_changer_holder)
-                            continue
-                    board_states.append(game_board_changer)
-                    game_board_changer = copy.deepcopy(game_board_changer_holder)
-                else:
-                    board_states.append(game_board_changer)
-                    game_board_changer = copy.deepcopy(game_board_changer_holder)
+                # if len(board_states) > 0:
+                #     for g in range(len(board_states)):
+                #         check = DeepDiff(board_states[g], game_board_changer)
+                #         if not (DeepDiff(board_states[g], game_board_changer)):
+                #             game_board_changer = copy.deepcopy(game_board_changer_holder)
+                #             continue
+                #     if (DeepDiff(game_board_changer_holder, game_board_changer)):
+                #         board_states.append(game_board_changer)
+                #         game_board_changer = copy.deepcopy(game_board_changer_holder)
+                # else:
+                board_states.append(game_board_changer)
+                game_board_changer = copy.deepcopy(game_board_changer_holder)
             one_roll_board_states.append(game_board_changer_holder)
             game_board_changer = copy.deepcopy(game_board_generator)
         if len(board_states) == 0:
@@ -454,22 +470,20 @@ class Board:
             for i in range(0, len(valid_moves)):
                 game_board_changer.execute_move(colour, valid_moves[i], roll_1)
                 game_board_changer_holder = copy.deepcopy(game_board_changer)
-                if self.game_finished():
-                    return
                 valid_moves_roll2 = game_board_changer.valid_moves(colour, roll_2)
                 for j in range(0, len(valid_moves_roll2)):
                     game_board_changer.execute_move(colour, valid_moves_roll2[j], roll_2)
-                    if len(board_states) > 0:
-                        for g in range(len(board_states)):
-                            if not (DeepDiff(board_states[g], game_board_changer)):
-                                game_board_changer = copy.deepcopy(game_board_changer_holder)
-                                continue
-
-                        board_states.append(game_board_changer)
-                        game_board_changer = copy.deepcopy(game_board_changer_holder)
-                    else:
-                        board_states.append(game_board_changer)
-                        game_board_changer = copy.deepcopy(game_board_changer_holder)
+                    # if len(board_states) > 0:
+                    #     for g in range(len(board_states)):
+                    #         if not (DeepDiff(board_states[g], game_board_changer)):
+                    #             game_board_changer = copy.deepcopy(game_board_changer_holder)
+                    #             continue
+                    #     if (DeepDiff(game_board_changer_holder, game_board_changer)):
+                    #         board_states.append(game_board_changer)
+                    #         game_board_changer = copy.deepcopy(game_board_changer_holder)
+                    # else:
+                    board_states.append(game_board_changer)
+                    game_board_changer = copy.deepcopy(game_board_changer_holder)
                 one_roll_board_states.append(game_board_changer_holder)
                 game_board_changer = copy.deepcopy(game_board_generator)
 
@@ -478,22 +492,21 @@ class Board:
             for i in range(0, len(valid_moves)):
                 game_board_changer.execute_move(colour, valid_moves[i], roll_2)
                 game_board_changer_holder = copy.deepcopy(game_board_changer)
-                if self.game_finished():
-                    return
                 valid_moves_roll1 = game_board_changer.valid_moves(colour, roll_1)
                 for j in range(0, len(valid_moves_roll1)):
                     game_board_changer.execute_move(colour, valid_moves_roll1[j], roll_1)
-                    if len(board_states) > 0:
-                        for g in range(len(board_states)):
-                            check = DeepDiff(board_states[g], game_board_changer)
-                            if not (DeepDiff(board_states[g], game_board_changer)):
-                                game_board_changer = copy.deepcopy(game_board_changer_holder)
-                                continue
-                        board_states.append(game_board_changer)
-                        game_board_changer = copy.deepcopy(game_board_changer_holder)
-                    else:
-                        board_states.append(game_board_changer)
-                        game_board_changer = copy.deepcopy(game_board_changer_holder)
+                    # if len(board_states) > 0:
+                    #     for g in range(len(board_states)):
+                    #         check = DeepDiff(board_states[g], game_board_changer)
+                    #         if not (DeepDiff(board_states[g], game_board_changer)):
+                    #             game_board_changer = copy.deepcopy(game_board_changer_holder)
+                    #             continue
+                    #     if (DeepDiff(game_board_changer_holder, game_board_changer)):
+                    #         board_states.append(game_board_changer)
+                    #         game_board_changer = copy.deepcopy(game_board_changer_holder)
+                    # else:
+                    board_states.append(game_board_changer)
+                    game_board_changer = copy.deepcopy(game_board_changer_holder)
                 one_roll_board_states.append(game_board_changer_holder)
                 game_board_changer = copy.deepcopy(game_board_generator)
             if len(board_states) == 0:
