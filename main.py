@@ -744,28 +744,35 @@ class Board:
 
 
 class Program:
-    def run_one_game():
-        game_board = Board(Board.end_board_test_2())
-        player1 = Player(Colours.WHITE, "Max", game_board)
-        player2 = Player(Colours.BLACK, "Black", game_board)
-        game = Game(player1, player2, player2, game_board)
-        backgammonModel = BackgammonModel(56,2,10,32)
-        board_history = []
-        Program.board_outputter(game.board)
-        starting_board = copy.deepcopy(game.board)
-        while not game.board.game_finished():
-            game.run_neural_network(1,backgammonModel)
-            board_history.append(game.board)
+    def run_one_game(games):
+        number_of_wins_black = 0
+        number_of_wins_white = 0
+        for i in range(0,games):
+            game_board = Board(Board.starting_board())
+            player1 = Player(Colours.WHITE, "White", game_board)
+            player2 = Player(Colours.BLACK, "Black", game_board)
+            game = Game(player1, player2, player2, game_board)
+            backgammonModel = BackgammonModel(56,2,10,32)
+            board_history = []
+            Program.board_outputter(game.board)
+            starting_board = copy.deepcopy(game.board)
+            while not game.board.game_finished():
+                game.run_neural_network(1,backgammonModel)
+                board_history.append(game.board)
 
-        if game.board.locations[50].number == 15:
-            df = starting_board.convert_to_pd_with_winner(1)
-            Program.write_history_to_file(1,board_history,df)
-            print("Game is finished the winner is Black")
-        else:
-            df = starting_board.convert_to_pd_with_winner(-1)
-            Program.write_history_to_file(-1,board_history,df)
-            print("Game is finished the winner is White")
-
+            if game.board.locations[50].number == 15:
+                number_of_wins_black+=1
+                df = starting_board.convert_to_pd_with_winner(1)
+                Program.write_history_to_file(1,board_history,df)
+                print("Game is finished the winner is Black")
+            else:
+                number_of_wins_white+=1
+                df = starting_board.convert_to_pd_with_winner(-1)
+                Program.write_history_to_file(-1,board_history,df)
+                print("Game is finished the winner is White")
+        print("The number of wins for black is " + str(number_of_wins_black))
+        print("The number of wins for white is " + str(number_of_wins_white))
+        print("The number of games played was " + str(games))
     def write_history_to_file(winner,board_history,df):
         for move in board_history:
             check = move.convert_to_pd_with_winner(winner)
@@ -859,11 +866,11 @@ class Game:
             return
         roll1 = roll_dice()
         roll2 = roll_dice()
-
+        print("Rolled " + str(roll1) + " " + str(roll2))
         # The end game checker is not working and there may be issues with min black and white for later also white issues
         if len(self.board.valid_moves(self.current_player.colour, roll1)) == 0 and \
                 len(self.board.valid_moves(self.current_player.colour, roll2)) == 0:
-            print("No valid moves for " + self.current_player.name)
+            print("No valid moves for " + self.current_player.name +" the rolls where " + str(roll1) +" "+ str(roll2))
             Game.player_swapper(self)
             return
 
@@ -1016,6 +1023,6 @@ class Game:
 
 
 if __name__ == '__main__':
-    Program.run_one_game()
+    Program.run_one_game(3)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
