@@ -787,6 +787,7 @@ class Board:
 
 
 class Program:
+    # There may be wrong games before 3265 in the game history before the bug fixes
     def run_one_game(games):
         number_of_wins_black = 0
         number_of_wins_white = 0
