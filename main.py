@@ -270,6 +270,39 @@ class Board:
         locations[51] = Location(0, Colours.EMPTY)  # Where white pieces are taken off the board in end game
         return locations
 
+    def end_board_test_3():
+        locations = {}
+        locations[0] = Location(3, Colours.BLACK)
+        locations[1] = Location(0, Colours.EMPTY)
+        locations[2] = Location(3, Colours.BLACK)
+        locations[3] = Location(1, Colours.BLACK)
+        locations[4] = Location(0, Colours.EMPTY)
+        locations[5] = Location(0, Colours.EMPTY)
+        locations[6] = Location(0, Colours.EMPTY)
+        locations[7] = Location(0, Colours.EMPTY)
+        locations[8] = Location(0, Colours.EMPTY)
+        locations[9] = Location(0, Colours.EMPTY)
+        locations[10] = Location(0, Colours.EMPTY)
+        locations[11] = Location(0, Colours.EMPTY)
+        locations[12] = Location(0, Colours.EMPTY)
+        locations[13] = Location(4, Colours.BLACK)
+        locations[14] = Location(1, Colours.BLACK)
+        locations[15] = Location(0, Colours.EMPTY)
+        locations[16] = Location(1, Colours.BLACK)
+        locations[17] = Location(0, Colours.EMPTY)
+        locations[18] = Location(7, Colours.WHITE)
+        locations[19] = Location(2, Colours.BLACK)
+        locations[20] = Location(0, Colours.EMPTY)
+        locations[21] = Location(0, Colours.EMPTY)
+        locations[22] = Location(4, Colours.WHITE)
+        locations[23] = Location(1, Colours.WHITE)
+        locations[40] = Location(0, Colours.EMPTY)  # where exposed pieces go(black)
+        locations[41] = Location(0, Colours.EMPTY)  # where exposed pieces go(white)
+        locations[50] = Location(0, Colours.EMPTY)  # Where black pieces are taken off the board in end game
+        locations[51] = Location(3, Colours.WHITE)  # Where white pieces are taken off the board in end game
+        return locations
+
+
     def end_of_game_checker(self, colour):
         adder = 0
         if colour == Colours.BLACK:
@@ -310,11 +343,11 @@ class Board:
                 colour_locations.append(i)
         # Valid moves the white player to move in the end game to take off
         for w in range(23, 17, -1):
-            if colour == Colours.WHITE and self.locations[w].number >= 1:
+            if self.locations[w].colour == Colours.WHITE and self.locations[w].number >= 1:
                 colour_locations_end_game_white.append(w)
         # Copy paste check for error
         for b in range(0, 6):
-            if colour == Colours.BLACK and self.locations[b].number >= 1:
+            if self.locations[b].colour == Colours.BLACK and self.locations[b].number >= 1:
                 colour_locations_end_game_black.append(b)
 
         # Valid moves being processed in the end game (taking off the board)
@@ -323,14 +356,20 @@ class Board:
                 minimum_black = self.calculate_minimum_black(dice_value, colour)
                 for end_game_locations_b in colour_locations_end_game_black:
                     locator = end_game_locations_b - dice_value
-                    if locator == minimum_black or locator == -1 or locator >= 0:
+                    if locator == minimum_black or locator == -1 or self.valid_locations_pieces_can_go(colour):
+                        if 0 <= locator <= 23:
+                            if self.locations[locator].colour == Colours.WHITE:
+                                continue
                         valid_moves.append(end_game_locations_b)
                 return valid_moves
             else:
                 maximum_white = self.calculate_maximum_white(dice_value, colour)
                 for end_game_locations_w in colour_locations_end_game_white:
                     locator = end_game_locations_w + dice_value
-                    if locator == maximum_white or locator == 24 or locator <= 23:
+                    if locator == maximum_white or locator == 24 or locator in self.valid_locations_pieces_can_go(colour):
+                        if  0 <= locator <=23:
+                            if self.locations[locator].colour == Colours.BLACK:
+                                continue
                         valid_moves.append(end_game_locations_w)
                 return valid_moves
         if (colour == Colours.BLACK and self.locations[40].number >= 1) or (
@@ -752,10 +791,10 @@ class Program:
         number_of_wins_black = 0
         number_of_wins_white = 0
         backgammonModel = BackgammonModel(56, 3, 10, 32)
-        training_data = Program.read_history_from_file()
-        backgammonModel.train(training_data)
+        #training_data = Program.read_history_from_file()
+        #backgammonModel.train(training_data)
         for i in range(0,games):
-            game_board = Board(Board.end_board_test())
+            game_board = Board(Board.end_board_test_3())
             player1 = Player(Colours.WHITE, "White", game_board)
             player2 = Player(Colours.BLACK, "Black", game_board)
             game = Game(player1, player2, player1, game_board)
@@ -894,9 +933,9 @@ class Game:
         copy_board = copy.deepcopy(self.board)
         copy_current_player = copy.deepcopy(self.current_player.colour)
 
-        board_states = copy_board.generate_valid_board_states_after_both_moves(copy_current_player, roll1,roll2)
-        #for i in board_states:
-            #Program.board_outputter(i)
+        board_states = copy_board.generate_valid_board_states_after_both_moves(copy_current_player, 6,1)
+        for i in board_states:
+            Program.board_outputter(i)
         #if self.current_player.colour.value == nnplayer:
         max_value = 0
         best_move = board_states[0]
