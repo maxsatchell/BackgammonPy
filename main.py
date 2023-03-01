@@ -272,6 +272,102 @@ class Board:
 
     def end_board_test_3():
         locations = {}
+        locations[0] = Location(1, Colours.WHITE)
+        locations[1] = Location(2, Colours.BLACK)
+        locations[2] = Location(1, Colours.BLACK)
+        locations[3] = Location(0, Colours.EMPTY)
+        locations[4] = Location(2, Colours.BLACK)
+        locations[5] = Location(2, Colours.BLACK)
+        locations[6] = Location(1, Colours.WHITE)
+        locations[7] = Location(1, Colours.BLACK)
+        locations[8] = Location(0, Colours.EMPTY)
+        locations[9] = Location(0, Colours.EMPTY)
+        locations[10] = Location(0, Colours.EMPTY)
+        locations[11] = Location(5, Colours.WHITE)
+        locations[12] = Location(4, Colours.BLACK)
+        locations[13] = Location(0, Colours.EMPTY)
+        locations[14] = Location(0, Colours.EMPTY)
+        locations[15] = Location(0, Colours.EMPTY)
+        locations[16] = Location(0, Colours.EMPTY)
+        locations[17] = Location(2, Colours.BLACK)
+        locations[18] = Location(5, Colours.WHITE)
+        locations[19] = Location(0, Colours.EMPTY)
+        locations[20] = Location(0, Colours.EMPTY)
+        locations[21] = Location(0, Colours.EMPTY)
+        locations[22] = Location(1, Colours.WHITE)
+        locations[23] = Location(2, Colours.WHITE)
+        locations[40] = Location(0, Colours.EMPTY)  # where exposed pieces go(black)
+        locations[41] = Location(0, Colours.EMPTY)  # where exposed pieces go(white)
+        locations[50] = Location(0, Colours.EMPTY)  # Where black pieces are taken off the board in end game
+        locations[51] = Location(0, Colours.EMPTY)  # Where white pieces are taken off the board in end game
+        return locations
+
+    def end_board_test_empty():
+        locations = {}
+        locations[0] = Location(0, Colours.EMPTY)
+        locations[1] = Location(0, Colours.EMPTY)
+        locations[2] = Location(0, Colours.EMPTY)
+        locations[3] = Location(0, Colours.EMPTY)
+        locations[4] = Location(0, Colours.EMPTY)
+        locations[5] = Location(0, Colours.EMPTY)
+        locations[6] = Location(0, Colours.EMPTY)
+        locations[7] = Location(0, Colours.EMPTY)
+        locations[8] = Location(0, Colours.EMPTY)
+        locations[9] = Location(0, Colours.EMPTY)
+        locations[10] = Location(0, Colours.EMPTY)
+        locations[11] = Location(0, Colours.EMPTY)
+        locations[12] = Location(0, Colours.EMPTY)
+        locations[13] = Location(0, Colours.EMPTY)
+        locations[14] = Location(0, Colours.EMPTY)
+        locations[15] = Location(0, Colours.EMPTY)
+        locations[16] = Location(0, Colours.EMPTY)
+        locations[17] = Location(0, Colours.EMPTY)
+        locations[18] = Location(0, Colours.EMPTY)
+        locations[19] = Location(0, Colours.EMPTY)
+        locations[20] = Location(0, Colours.EMPTY)
+        locations[21] = Location(0, Colours.EMPTY)
+        locations[22] = Location(0, Colours.EMPTY)
+        locations[23] = Location(0, Colours.EMPTY)
+        locations[40] = Location(0, Colours.EMPTY)  # where exposed pieces go(black)
+        locations[41] = Location(0, Colours.EMPTY)  # where exposed pieces go(white)
+        locations[50] = Location(0, Colours.EMPTY)  # Where black pieces are taken off the board in end game
+        locations[51] = Location(0, Colours.EMPTY)  # Where white pieces are taken off the board in end game
+        return locations
+
+    def end_board_test_4():
+        locations = {}
+        locations[0] = Location(7, Colours.BLACK)
+        locations[1] = Location(0, Colours.EMPTY)
+        locations[2] = Location(0, Colours.EMPTY)
+        locations[3] = Location(2, Colours.BLACK)
+        locations[4] = Location(0, Colours.EMPTY)
+        locations[5] = Location(2, Colours.BLACK)
+        locations[6] = Location(0, Colours.EMPTY)
+        locations[7] = Location(0, Colours.EMPTY)
+        locations[8] = Location(0, Colours.EMPTY)
+        locations[9] = Location(0, Colours.EMPTY)
+        locations[10] = Location(0, Colours.EMPTY)
+        locations[11] = Location(0, Colours.EMPTY)
+        locations[12] = Location(0, Colours.EMPTY)
+        locations[13] = Location(0, Colours.EMPTY)
+        locations[14] = Location(0, Colours.EMPTY)
+        locations[15] = Location(0, Colours.EMPTY)
+        locations[16] = Location(0, Colours.EMPTY)
+        locations[17] = Location(0, Colours.EMPTY)
+        locations[18] = Location(0, Colours.EMPTY)
+        locations[19] = Location(0, Colours.EMPTY)
+        locations[20] = Location(0, Colours.EMPTY)
+        locations[21] = Location(0, Colours.EMPTY)
+        locations[22] = Location(0, Colours.EMPTY)
+        locations[23] = Location(1, Colours.WHITE)
+        locations[40] = Location(0, Colours.EMPTY)  # where exposed pieces go(black)
+        locations[41] = Location(0, Colours.EMPTY)  # where exposed pieces go(white)
+        locations[50] = Location(4, Colours.BLACK)  # Where black pieces are taken off the board in end game
+        locations[51] = Location(14, Colours.WHITE)  # Where white pieces are taken off the board in end game
+        return locations
+
+    def end_board_test_5():
+        locations = {}
         locations[0] = Location(3, Colours.BLACK)
         locations[1] = Location(0, Colours.EMPTY)
         locations[2] = Location(3, Colours.BLACK)
@@ -356,7 +452,7 @@ class Board:
                 minimum_black = self.calculate_minimum_black(dice_value, colour)
                 for end_game_locations_b in colour_locations_end_game_black:
                     locator = end_game_locations_b - dice_value
-                    if locator == minimum_black or locator == -1 or self.valid_locations_pieces_can_go(colour):
+                    if locator == minimum_black or locator == -1 or locator >=0:
                         if 0 <= locator <= 23:
                             if self.locations[locator].colour == Colours.WHITE:
                                 continue
@@ -366,7 +462,7 @@ class Board:
                 maximum_white = self.calculate_maximum_white(dice_value, colour)
                 for end_game_locations_w in colour_locations_end_game_white:
                     locator = end_game_locations_w + dice_value
-                    if locator == maximum_white or locator == 24 or locator in self.valid_locations_pieces_can_go(colour):
+                    if locator == maximum_white or locator == 24 or locator <=23:
                         if  0 <= locator <=23:
                             if self.locations[locator].colour == Colours.BLACK:
                                 continue
@@ -795,10 +891,10 @@ class Program:
         #training_data = Program.read_history_from_file()
         #backgammonModel.train(training_data)
         for i in range(0,games):
-            game_board = Board(Board.end_board_test_3())
+            game_board = Board(Board.starting_board())
             player1 = Player(Colours.WHITE, "White", game_board)
             player2 = Player(Colours.BLACK, "Black", game_board)
-            game = Game(player1, player2, player1, game_board)
+            game = Game(player1, player2, player2, game_board)
             board_history = []
             Program.board_outputter(game.board)
             starting_board = copy.deepcopy(game.board)
@@ -934,7 +1030,7 @@ class Game:
         copy_board = copy.deepcopy(self.board)
         copy_current_player = copy.deepcopy(self.current_player.colour)
 
-        board_states = copy_board.generate_valid_board_states_after_both_moves(copy_current_player, 6,1)
+        board_states = copy_board.generate_valid_board_states_after_both_moves(copy_current_player, roll1,roll2)
         for i in board_states:
             Program.board_outputter(i)
         #if self.current_player.colour.value == nnplayer:
@@ -1082,6 +1178,6 @@ class Game:
 
 
 if __name__ == '__main__':
-    Program.run_one_game(1)
+    Program.run_one_game(2)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
