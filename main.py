@@ -1,3 +1,4 @@
+import ast
 import copy
 import random
 
@@ -747,12 +748,14 @@ class Program:
     def run_one_game(games):
         number_of_wins_black = 0
         number_of_wins_white = 0
+        backgammonModel = BackgammonModel(56, 3, 10, 32)
+        training_data = Program.read_history_from_file()
+        backgammonModel.train(training_data)
         for i in range(0,games):
-            game_board = Board(Board.starting_board())
+            game_board = Board(Board.end_board_test_2())
             player1 = Player(Colours.WHITE, "White", game_board)
             player2 = Player(Colours.BLACK, "Black", game_board)
-            game = Game(player1, player2, player2, game_board)
-            backgammonModel = BackgammonModel(56,2,10,32)
+            game = Game(player1, player2, player1, game_board)
             board_history = []
             Program.board_outputter(game.board)
             starting_board = copy.deepcopy(game.board)
@@ -777,8 +780,19 @@ class Program:
         for move in board_history:
             check = move.convert_to_pd_with_winner(winner)
             df = df.append(check)
-
         df.to_csv('game_history.csv', mode='a', index=False, header=False)
+
+    def read_history_from_file():
+        df2 = pd.read_csv("game_history.csv")
+        game_history = []
+        df_to_numpy = df2.to_numpy()
+        i = 0
+        while i < len(df_to_numpy):
+            file_input = (df_to_numpy[i][0], df_to_numpy[i][1:])
+            game_history.append(file_input)
+            i += 1
+
+        return game_history
 
 
     def board_outputter(current_board):
@@ -878,21 +892,21 @@ class Game:
         copy_current_player = copy.deepcopy(self.current_player.colour)
 
         board_states = copy_board.generate_valid_board_states_after_both_moves(copy_current_player, roll1, roll2)
-        if self.current_player.colour.value == nnplayer:
-            max_value = 0
-            best_move = board_states[0]
-            for i in range(0,len(board_states)):
-                # get a copy of a board
-                if nnplayer == 1:#choose if white or black
-                    value = model.predict(board_states[i].convert_to_pd(), 0)
-                else:
-                    value = model.predict(board_states[i].convert_to_pd(), 1)#choose if white or black
-                if value > max_value:
-                    max_value = value
-                    best_move = board_states[i]
-            selected_move = best_move
-        else:
-            selected_move = board_states[random.randrange(0, len(board_states))]
+        #if self.current_player.colour.value == nnplayer:
+        max_value = 0
+        best_move = board_states[0]
+        for i in range(0,len(board_states)):
+            # get a copy of a board
+            if nnplayer == 1:#choose if white or black
+                value = model.predict(board_states[i].convert_to_pd(), 1)
+            else:
+                value = model.predict(board_states[i].convert_to_pd(), 2)#choose if white or black
+            if value > max_value:
+                max_value = value
+                best_move = board_states[i]
+        selected_move = best_move
+        #else:
+            #selected_move = board_states[random.randrange(0, len(board_states))]
         self.board = selected_move
         Program.board_outputter(self.board)
         Game.player_swapper(self)

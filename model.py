@@ -29,8 +29,8 @@ class BackgammonModel:
         input = []
         output = []
         for data in dataset:
-            input.append(data[1])
             output.append(data[0])
+            input.append(data[1])
         x = np.array(input).reshape((-1, self.numberOfInputs))
         y = to_categorical(output, num_classes=3)
         # Train and test data split
