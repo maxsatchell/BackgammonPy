@@ -35,12 +35,12 @@ class Program:
             game_board = Board(Board.starting_board())
             player1 = Player(Colours.WHITE, "White", game_board)
             player2 = Player(Colours.BLACK, "Black", game_board)
-            game = Game(player1, player2, player2, game_board)
+            game = Game(player1, player2, player1, game_board)
             board_history = []
             Program.board_outputter(game.board)
             starting_board = copy.deepcopy(game.board)
             while not game.board.game_finished():
-                game.run_neural_network(1,backgammonModel)
+                game.run_neural_network(backgammonModel)
                 board_history.append(game.board)
 
             if game.board.locations[50].number == 15:
@@ -155,7 +155,7 @@ class Game:
         self.current_player = current_player
         self.board = board
 
-    def run_neural_network(self,nnplayer,model):
+    def run_neural_network(self,model):
         if self.board.game_finished():
             return
         roll1 = roll_dice()
@@ -169,9 +169,9 @@ class Game:
             return
 
         copy_board = copy.deepcopy(self.board)
-        copy_current_player = copy.deepcopy(self.current_player.colour)
+        copy_current_player = copy.deepcopy(self.current_player)
 
-        board_states = copy_board.generate_valid_board_states_after_both_moves(copy_current_player, roll1,roll2)
+        board_states = copy_board.generate_valid_board_states_after_both_moves(copy_current_player.colour, roll1,roll2)
         #for i in board_states:
             #Program.board_outputter(i)
         #if self.current_player.colour.value == nnplayer:
@@ -179,7 +179,7 @@ class Game:
         best_move = board_states[0]
         for i in range(0,len(board_states)):
             # get a copy of a board
-            if nnplayer == 1:#choose if white or black
+            if copy_current_player.colour.value == 1:#choose if white or black
                 value = model.predict(board_states[i].convert_to_pd(), 1)
             else:
                 value = model.predict(board_states[i].convert_to_pd(), 2)#choose if white or black
