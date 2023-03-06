@@ -1,7 +1,8 @@
 import ast
 import copy
 import random
-
+import tensorflow as tf
+import keras
 from enum import Enum
 from deepdiff import DeepDiff
 import pandas as pd
@@ -884,12 +885,14 @@ class Board:
 
 class Program:
     # There may be wrong games before 3265 in the game history before the bug fixes
+    #4361
     def run_one_game(games):
         number_of_wins_black = 0
         number_of_wins_white = 0
         backgammonModel = BackgammonModel(56, 3, 10, 32)
-        #training_data = Program.read_history_from_file()
-        #backgammonModel.train(training_data)
+        #backgammonModel = tf.keras.models.load_model('Models\model_1')
+        training_data = Program.read_history_from_file()
+        backgammonModel.train(training_data)
         for i in range(0,games):
             game_board = Board(Board.starting_board())
             player1 = Player(Colours.WHITE, "White", game_board)
@@ -906,12 +909,12 @@ class Program:
                 number_of_wins_black+=1
                 df = starting_board.convert_to_pd_with_winner(1)
                 Program.write_history_to_file(1,board_history,df)
-                print("Game is finished the winner is Black")
+                print("Game is finished the winner is Black  The game number is "+  str(i))
             else:
                 number_of_wins_white+=1
                 df = starting_board.convert_to_pd_with_winner(-1)
                 Program.write_history_to_file(-1,board_history,df)
-                print("Game is finished the winner is White")
+                print("Game is finished the winner is White  The game number is "+  str(i))
         print("The number of wins for black is " + str(number_of_wins_black))
         print("The number of wins for white is " + str(number_of_wins_white))
         print("The number of games played was " + str(games))
@@ -1031,8 +1034,8 @@ class Game:
         copy_current_player = copy.deepcopy(self.current_player.colour)
 
         board_states = copy_board.generate_valid_board_states_after_both_moves(copy_current_player, roll1,roll2)
-        for i in board_states:
-            Program.board_outputter(i)
+        #for i in board_states:
+            #Program.board_outputter(i)
         #if self.current_player.colour.value == nnplayer:
         max_value = 0
         best_move = board_states[0]
@@ -1178,6 +1181,6 @@ class Game:
 
 
 if __name__ == '__main__':
-    Program.run_one_game(2)
+    Program.run_one_game(1)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
