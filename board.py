@@ -301,6 +301,70 @@ class Board:
         locations[51] = Location(3, Colours.WHITE)  # Where white pieces are taken off the board in end game
         return locations
 
+    def end_board_test_6():
+        locations = {}
+        locations[0] = Location(3, Colours.BLACK)
+        locations[1] = Location(1, Colours.BLACK)
+        locations[2] = Location(1, Colours.BLACK)
+        locations[3] = Location(6, Colours.BLACK)
+        locations[4] = Location(0, Colours.EMPTY)
+        locations[5] = Location(0, Colours.EMPTY)
+        locations[6] = Location(2, Colours.BLACK)
+        locations[7] = Location(0, Colours.EMPTY)
+        locations[8] = Location(0, Colours.EMPTY)
+        locations[9] = Location(0, Colours.EMPTY)
+        locations[10] = Location(0, Colours.EMPTY)
+        locations[11] = Location(0, Colours.EMPTY)
+        locations[12] = Location(1, Colours.BLACK)
+        locations[13] = Location(0, Colours.EMPTY)
+        locations[14] = Location(0, Colours.EMPTY)
+        locations[15] = Location(0, Colours.EMPTY)
+        locations[16] = Location(0, Colours.EMPTY)
+        locations[17] = Location(0, Colours.EMPTY)
+        locations[18] = Location(1, Colours.BLACK)
+        locations[19] = Location(0, Colours.EMPTY)
+        locations[20] = Location(0, Colours.EMPTY)
+        locations[21] = Location(1, Colours.WHITE)
+        locations[22] = Location(2, Colours.WHITE)
+        locations[23] = Location(11, Colours.WHITE)
+        locations[40] = Location(0, Colours.EMPTY)  # where exposed pieces go(black)
+        locations[41] = Location(0, Colours.EMPTY)  # where exposed pieces go(white)
+        locations[50] = Location(0, Colours.EMPTY)  # Where black pieces are taken off the board in end game
+        locations[51] = Location(1, Colours.WHITE)  # Where white pieces are taken off the board in end game
+        return locations
+
+    def end_board_test_7():
+        locations = {}
+        locations[0] = Location(11, Colours.BLACK)
+        locations[1] = Location(2, Colours.BLACK)
+        locations[2] = Location(1, Colours.BLACK)
+        locations[3] = Location(0, Colours.EMPTY)
+        locations[4] = Location(0, Colours.EMPTY)
+        locations[5] = Location(1, Colours.WHITE)
+        locations[6] = Location(0, Colours.EMPTY)
+        locations[7] = Location(0, Colours.EMPTY)
+        locations[8] = Location(0, Colours.EMPTY)
+        locations[9] = Location(0, Colours.EMPTY)
+        locations[10] = Location(0, Colours.EMPTY)
+        locations[11] = Location(0, Colours.EMPTY)
+        locations[12] = Location(0, Colours.EMPTY)
+        locations[13] = Location(0, Colours.EMPTY)
+        locations[14] = Location(0, Colours.EMPTY)
+        locations[15] = Location(0, Colours.EMPTY)
+        locations[16] = Location(0, Colours.EMPTY)
+        locations[17] = Location(0, Colours.EMPTY)
+        locations[18] = Location(0, Colours.EMPTY)
+        locations[19] = Location(0, Colours.EMPTY)
+        locations[20] = Location(0, Colours.EMPTY)
+        locations[21] = Location(1, Colours.WHITE)
+        locations[22] = Location(2, Colours.WHITE)
+        locations[23] = Location(11, Colours.WHITE)
+        locations[40] = Location(0, Colours.EMPTY)  # where exposed pieces go(black)
+        locations[41] = Location(0, Colours.EMPTY)  # where exposed pieces go(white)
+        locations[50] = Location(1, Colours.BLACK)  # Where black pieces are taken off the board in end game
+        locations[51] = Location(0, Colours.EMPTY)  # Where white pieces are taken off the board in end game
+        return locations
+
 
     def end_of_game_checker(self, colour):
         adder = 0
@@ -703,12 +767,12 @@ class Board:
         if self.end_of_game_checker(colour):
             count = 0
             while True:
-                if self.locations[5 - count].number <= 0:
+                if self.locations[5 - count].number <= 0 or not(self.locations[5 - count].colour == Colours.BLACK):
                     minimum -= 1
                     count += 1
                 else:
                     return minimum - die
-                if self.locations[5 - (count - 1)].number > 0:
+                if self.locations[5 - (count - 1)].number > 0 and self.locations[5 - (count - 1)].colour == Colours.BLACK:
                     break
         return minimum - die
 
@@ -719,12 +783,12 @@ class Board:
         if self.end_of_game_checker(colour):
             count = 0
             while True:
-                if self.locations[18 + count].number <= 0:
+                if (self.locations[18 + count].number <= 0) or not(self.locations[18 + count].colour == Colours.WHITE):
                     maximum += 1
                     count += 1
                 else:
                     return maximum + die
-                if self.locations[18 - (count - 1)].number > 0:
+                if self.locations[18 + (count - 1)].number > 0 and (self.locations[18 + (count - 1)].colour == Colours.WHITE):
                     break
         return maximum + die
 
