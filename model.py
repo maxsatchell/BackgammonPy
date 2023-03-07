@@ -1,4 +1,4 @@
-import tensorflow
+import tensorflow as tf
 from keras.layers import Dense
 from keras.layers import Dropout
 from keras.models import Sequential
@@ -41,6 +41,15 @@ class BackgammonModel:
         y_test = y[boundary:]
         self.model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=self.epochs,
                        batch_size=self.batchSize) # define a NN that can take the right structure run occasionaly because it is super slow
-        #self.model.save(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_1')
     def predict(self, data, index):
         return self.model.predict(np.array(data).reshape(-1, self.numberOfInputs))[0][index]
+
+
+    def save(self,filepath):
+        self.model.save(filepath)
+
+    def update_internal_model(self,nn):
+        self.model = nn
+
+    def summary(self):
+        return self.model.summary()

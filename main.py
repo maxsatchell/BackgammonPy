@@ -12,6 +12,8 @@ from colours import Colours
 from player import Player
 from board import Board
 from location import Location
+from keras.layers import Dense
+
 
 
 # Testing the crossover
@@ -22,25 +24,39 @@ def roll_dice():
 
 
 class Program:
+
     # There may be wrong games before 3265 in the game history before the bug fixes
     #4361
     def run_one_game(games):
         number_of_wins_black = 0
         number_of_wins_white = 0
-        backgammonModel = BackgammonModel(56, 3, 10, 32)
-        #backgammonModel = tf.keras.models.load_model('Models\model_1')
-        training_data = Program.read_history_from_file()
-        backgammonModel.train(training_data)
+        tf.random.set_seed(1234)
+        backgammonModel_0_AI_1 = BackgammonModel(56, 3, 10, 32)
+        backgammonModel_0_AI_1.summary()
+        tf.random.set_seed(4321)
+        backgammonModel_0_AI_2 = BackgammonModel(56, 3, 10, 32)
+        backgammonModel_0_AI_2.summary()
+        loadedModel_0_AI_1 = tf.keras.models.load_model(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_0_AI_1.h5')
+        backgammonModel_0_AI_1.update_internal_model(loadedModel_0_AI_1)
+        #backgammonModel_0_AI_1.summary()
+        loadedModel_0_AI_2 = tf.keras.models.load_model(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_0_AI_2.h5')
+        backgammonModel_0_AI_2.update_internal_model(loadedModel_0_AI_2)
+        #backgammonModel.summary()
+        #training_data = Program.read_history_from_file()
+        #backgammonModel.train(training_data)
+        #backgammonModel_0_AI_1.save(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_0_AI_1.h5')
+        #backgammonModel_0_AI_2.save(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_0_AI_2.h5')
         for i in range(0,games):
             game_board = Board(Board.starting_board())
             player1 = Player(Colours.WHITE, "White", game_board)
             player2 = Player(Colours.BLACK, "Black", game_board)
-            game = Game(player1, player2, player1, game_board)
+            game = Game(player1, player2, player2, game_board)
             board_history = []
             Program.board_outputter(game.board)
             starting_board = copy.deepcopy(game.board)
             while not game.board.game_finished():
-                game.run_neural_network(backgammonModel)
+                # Left model is white, right model is black
+                game.run_neural_network(backgammonModel_0_AI_1,backgammonModel_0_AI_2)
                 board_history.append(game.board)
 
             if game.board.locations[50].number == 15:
@@ -60,7 +76,7 @@ class Program:
         for move in board_history:
             check = move.convert_to_pd_with_winner(winner)
             df = df.append(check)
-        df.to_csv('game_history.csv', mode='a', index=False, header=False)
+        df.to_csv('game_history_0_AI_1_vs_0_AI_2.csv', mode='a', index=False, header=False)
 
     def read_history_from_file():
         df2 = pd.read_csv("game_history.csv")
@@ -155,7 +171,7 @@ class Game:
         self.current_player = current_player
         self.board = board
 
-    def run_neural_network(self,model):
+    def run_neural_network(self,model_0,model_1):
         if self.board.game_finished():
             return
         roll1 = roll_dice()
@@ -180,9 +196,11 @@ class Game:
         for i in range(0,len(board_states)):
             # get a copy of a board
             if copy_current_player.colour.value == 1:#choose if white or black
-                value = model.predict(board_states[i].convert_to_pd(), 1)
+                #value = model.predict(np.array(board_states[i].convert_to_pd()).reshape(-1, 56))[0][1]
+                value = model_1.predict(board_states[i].convert_to_pd(), 1)
             else:
-                value = model.predict(board_states[i].convert_to_pd(), 2)#choose if white or black
+                #value = model.predict(np.array(board_states[i].convert_to_pd()).reshape(-1, 56))[0][2]
+                value = model_0.predict(board_states[i].convert_to_pd(), 2)#choose if white or black
             if value > max_value:
                 max_value = value
                 best_move = board_states[i]
@@ -319,6 +337,6 @@ class Game:
 
 
 if __name__ == '__main__':
-    Program.run_one_game(1)
+    Program.run_one_game(10)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
