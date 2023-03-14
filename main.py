@@ -30,21 +30,17 @@ class Program:
     def run_one_game(games):
         number_of_wins_black = 0
         number_of_wins_white = 0
-        tf.random.set_seed(1234)
-        backgammonModel_0_AI_1 = BackgammonModel(56, 3, 10, 32)
-        backgammonModel_0_AI_1.summary()
+        tf.random.set_seed(1234)#Might be a problem with seeding changing the model
+        backgammonModel_1_AI_2 = BackgammonModel(56, 3, 10, 32)
+        loadedModel_1_AI_2 = tf.keras.models.load_model(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_1_AI_2.h5')
+        backgammonModel_1_AI_2.update_internal_model(loadedModel_1_AI_2)
         tf.random.set_seed(4321)
-        backgammonModel_0_AI_2 = BackgammonModel(56, 3, 10, 32)
-        backgammonModel_0_AI_2.summary()
-        loadedModel_0_AI_1 = tf.keras.models.load_model(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_0_AI_1.h5')
-        backgammonModel_0_AI_1.update_internal_model(loadedModel_0_AI_1)
-        #backgammonModel_0_AI_1.summary()
-        loadedModel_0_AI_2 = tf.keras.models.load_model(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_0_AI_2.h5')
-        backgammonModel_0_AI_2.update_internal_model(loadedModel_0_AI_2)
-        #backgammonModel.summary()
+        backgammonModel_2_5_AI_2 = BackgammonModel(56, 3, 10, 32)
+        loadedModel_2_5_AI_2 = tf.keras.models.load_model(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_2_5_AI_2.h5')
+        backgammonModel_2_5_AI_2.update_internal_model(loadedModel_2_5_AI_2)
         #training_data = Program.read_history_from_file()
-        #backgammonModel.train(training_data)
-        #backgammonModel_0_AI_1.save(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_0_AI_1.h5')
+        #backgammonModel_2_5_AI_2.train(training_data)
+        #backgammonModel_2_5_AI_2.save(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_2_5_AI_2.h5')
         #backgammonModel_0_AI_2.save(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_0_AI_2.h5')
         for i in range(0,games):
             game_board = Board(Board.starting_board())
@@ -56,7 +52,7 @@ class Program:
             starting_board = copy.deepcopy(game.board)
             while not game.board.game_finished():
                 # Left model is white, right model is black
-                game.run_neural_network(backgammonModel_0_AI_1,backgammonModel_0_AI_2)
+                game.run_neural_network(backgammonModel_2_5_AI_2,backgammonModel_1_AI_2)
                 board_history.append(game.board)
 
             if game.board.locations[50].number == 15:
@@ -76,10 +72,10 @@ class Program:
         for move in board_history:
             check = move.convert_to_pd_with_winner(winner)
             df = df.append(check)
-        df.to_csv('game_history_0_AI_1_vs_0_AI_2.csv', mode='a', index=False, header=False)
+        df.to_csv('game_history_1_AI_2_vs_2.5_AI_2.csv', mode='a', index=False, header=False)
 
     def read_history_from_file():
-        df2 = pd.read_csv("game_history.csv")
+        df2 = pd.read_csv("overall_game_history.csv")
         game_history = []
         df_to_numpy = df2.to_numpy()
         i = 0
@@ -191,6 +187,21 @@ class Game:
         #for i in board_states:
             #Program.board_outputter(i)
         #if self.current_player.colour.value == nnplayer:
+        randomiser = random.randint(0,100)
+        if randomiser > 97:
+            if len(board_states) == 1:
+                selected_move = board_states[0]
+                self.board = selected_move
+                Program.board_outputter(self.board)
+                Game.player_swapper(self)
+                return
+            rando_board = random.randint(0,(len(board_states) -1))
+            selected_move = board_states[rando_board]
+            self.board = selected_move
+            Program.board_outputter(self.board)
+            Game.player_swapper(self)
+            return
+
         max_value = 0
         best_move = board_states[0]
         for i in range(0,len(board_states)):
@@ -337,6 +348,6 @@ class Game:
 
 
 if __name__ == '__main__':
-    Program.run_one_game(10)
+    Program.run_one_game(5)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
