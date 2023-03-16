@@ -30,17 +30,17 @@ class Program:
     def run_one_game(games):
         number_of_wins_black = 0
         number_of_wins_white = 0
-        tf.random.set_seed(1234)#Might be a problem with seeding changing the model
-        backgammonModel_1_AI_2 = BackgammonModel(56, 3, 10, 32)
-        loadedModel_1_AI_2 = tf.keras.models.load_model(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_1_AI_2.h5')
-        backgammonModel_1_AI_2.update_internal_model(loadedModel_1_AI_2)
         tf.random.set_seed(4321)
-        backgammonModel_2_5_AI_2 = BackgammonModel(56, 3, 10, 32)
-        loadedModel_2_5_AI_2 = tf.keras.models.load_model(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_2_5_AI_2.h5')
-        backgammonModel_2_5_AI_2.update_internal_model(loadedModel_2_5_AI_2)
+        backgammonModel_3_7_AI_2 = BackgammonModel(56, 3, 10, 32)
+        loadedModel_3_7_AI_2 = tf.keras.models.load_model(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_3_7_AI_2.h5')
+        backgammonModel_3_7_AI_2.update_internal_model(loadedModel_3_7_AI_2)
+        tf.random.set_seed(4321)
+        backgammonModel_4_AI_2 = BackgammonModel(56, 3, 10, 32)
+        loadedModel_4_AI_2 = tf.keras.models.load_model(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_4_AI_2.h5')
+        backgammonModel_4_AI_2.update_internal_model(loadedModel_4_AI_2)
         #training_data = Program.read_history_from_file()
-        #backgammonModel_2_5_AI_2.train(training_data)
-        #backgammonModel_2_5_AI_2.save(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_2_5_AI_2.h5')
+        #backgammonModel_4_AI_2.train(training_data)
+        #backgammonModel_4_AI_2.save(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_4_AI_2.h5')
         #backgammonModel_0_AI_2.save(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_0_AI_2.h5')
         for i in range(0,games):
             game_board = Board(Board.starting_board())
@@ -52,7 +52,7 @@ class Program:
             starting_board = copy.deepcopy(game.board)
             while not game.board.game_finished():
                 # Left model is white, right model is black
-                game.run_neural_network(backgammonModel_2_5_AI_2,backgammonModel_1_AI_2)
+                game.run_neural_network(backgammonModel_4_AI_2,backgammonModel_3_7_AI_2)
                 board_history.append(game.board)
 
             if game.board.locations[50].number == 15:
@@ -72,10 +72,10 @@ class Program:
         for move in board_history:
             check = move.convert_to_pd_with_winner(winner)
             df = df.append(check)
-        df.to_csv('game_history_1_AI_2_vs_2.5_AI_2.csv', mode='a', index=False, header=False)
+        df.to_csv('Data/game_history_4_AI_2_vs_3_7_AU_2', mode='a', index=False, header=False)
 
     def read_history_from_file():
-        df2 = pd.read_csv("overall_game_history.csv")
+        df2 = pd.read_csv("Data/overall_game_history.csv")
         game_history = []
         df_to_numpy = df2.to_numpy()
         i = 0
