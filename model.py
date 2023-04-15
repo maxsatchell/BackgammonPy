@@ -17,9 +17,11 @@ class BackgammonModel:
         self.model.add(Dense(64, activation='relu', input_shape=(numberOfInputs,))) # maybe increase the layers
         self.model.add(Dense(128, activation='relu')) # below 0 return 0 else return x
         # dropout layer 25% 75% through 0.05 dropout
+        self.model.add(Dropout(0.05))
         self.model.add(Dense(128, activation='relu'))
         self.model.add(Dense(128, activation='relu'))
         self.model.add(Dense(128, activation='relu'))
+        self.model.add(Dropout(0.05))
         self.model.add(Dense(128, activation='relu'))
         self.model.add(Dense(128, activation='relu'))
         self.model.add(Dense(numberOfOutputs, activation='softmax'))
@@ -42,7 +44,7 @@ class BackgammonModel:
         self.model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=self.epochs,
                        batch_size=self.batchSize) # define a NN that can take the right structure run occasionaly because it is super slow
     def predict(self, data, index):
-        return self.model.predict(np.array(data).reshape(-1, self.numberOfInputs))[0][index]
+        return self.model.predict(np.array(data).reshape(-1, self.numberOfInputs),verbose=None)[0][index]
 
 
     def save(self,filepath):
