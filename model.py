@@ -4,6 +4,10 @@ from keras.layers import Dropout
 from keras.models import Sequential
 from keras.utils import to_categorical
 import numpy as np
+import matplotlib.pyplot as plt
+from keras.callbacks import TensorBoard
+import time
+
 
 
 class BackgammonModel:
@@ -27,7 +31,11 @@ class BackgammonModel:
         self.model.add(Dense(numberOfOutputs, activation='softmax'))
         self.model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy']) #changed from rmsprop
 
+
+
+
     def train(self, dataset):
+        tensorboard = TensorBoard(log_dir="logs/{}".format(time.time()))
         input = []
         output = []
         for data in dataset:
@@ -41,8 +49,24 @@ class BackgammonModel:
         x_test = x[boundary:]
         y_train = y[:boundary]
         y_test = y[boundary:]
-        self.model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=self.epochs,
-                       batch_size=self.batchSize) # define a NN that can take the right structure run occasionaly because it is super slow
+        history = self.model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=self.epochs,
+                       batch_size=self.batchSize, callbacks=[tensorboard])
+        plt.plot(history.history['accuracy'])
+        plt.plot(history.history['val_accuracy'])
+        plt.title('Model accuracy')
+        plt.ylabel('Accuracy')
+        plt.xlabel('Epoch')
+        plt.legend(['Train', 'Validation'], loc='upper left')
+        plt.show()
+
+        # Plot the training and validation loss over the epochs
+        plt.plot(history.history['loss'])
+        plt.plot(history.history['val_loss'])
+        plt.title('Model loss')
+        plt.ylabel('Loss')
+        plt.xlabel('Epoch')
+        plt.legend(['Train', 'Validation'], loc='upper left')
+        plt.show()
     def predict(self, data, index):
         return self.model.predict(np.array(data).reshape(-1, self.numberOfInputs),verbose=None)[0][index]
 

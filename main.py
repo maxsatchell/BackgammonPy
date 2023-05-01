@@ -16,6 +16,9 @@ from keras.layers import Dense
 
 
 
+
+
+
 # Testing the crossover
 
 def roll_dice():
@@ -31,16 +34,16 @@ class Program:
         number_of_wins_black = 0
         number_of_wins_white = 0
         tf.random.set_seed(4321)
-        backgammonModel_19_AI_2 = BackgammonModel(56, 3, 10, 32)
-        loadedModel_19_AI_2 = tf.keras.models.load_model(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_19_AI_2.h5')
-        backgammonModel_19_AI_2.update_internal_model(loadedModel_19_AI_2)
+        backgammonModel_24_AI_2 = BackgammonModel(56, 3, 10, 32)
+        loadedModel_24_AI_2 = tf.keras.models.load_model(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_23_5_AI_2.h5')
+        backgammonModel_24_AI_2.update_internal_model(loadedModel_24_AI_2)
         tf.random.set_seed(4321)
-        backgammonModel_20_AI_2 = BackgammonModel(56, 3, 10, 32)
-        loadedModel_20_AI_2 = tf.keras.models.load_model(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_20_AI_2.h5')
-        backgammonModel_20_AI_2.update_internal_model(loadedModel_20_AI_2)
-        #training_data = Program.read_history_from_file()
-        #backgammonModel_20_AI_2.train(training_data)
-        #backgammonModel_20_AI_2.save(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_20_AI_2.h5')
+        backgammonModel_25_AI_2 = BackgammonModel(56, 3, 100, 32)
+        #loadedModel_25_AI_2 = tf.keras.models.load_model(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_23_8_AI_2.h5')
+        #backgammonModel_25_AI_2.update_internal_model(loadedModel_25_AI_2)
+        training_data = Program.read_history_from_file()
+        backgammonModel_25_AI_2.train(training_data)
+        backgammonModel_25_AI_2.save(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_fresh_AI_2.h5')
         #backgammonModel_0_AI_2.save(r'C:\Users\Max\PycharmProjects\BackgammonPy\Models\model_0_AI_2.h5')
         for i in range(0,games):
             game_board = Board(Board.starting_board())
@@ -52,7 +55,7 @@ class Program:
             starting_board = copy.deepcopy(game.board)
             while not game.board.game_finished():
                 # Left model is white, right model is black
-                game.run_neural_network(backgammonModel_19_AI_2,backgammonModel_20_AI_2)
+                game.run_neural_network(backgammonModel_25_AI_2,backgammonModel_25_AI_2)
                 board_history.append(game.board)
 
             if game.board.locations[50].number == 15:
@@ -72,7 +75,7 @@ class Program:
         for move in board_history:
             check = move.convert_to_pd_with_winner(winner)
             df = df.append(check)
-        df.to_csv('Data/game_history_20_AI_2_vs_19_AI_2', mode='a', index=False, header=False)
+        df.to_csv('Data/game_history_22_AI_2_vs_24_AI_2', mode='a', index=False, header=False)
 
     def read_history_from_file():
         df2 = pd.read_csv("Data/overall_game_history.csv")
@@ -170,8 +173,8 @@ class Game:
     def run_neural_network(self,model_0,model_1):
         if self.board.game_finished():
             return
-        roll1 = roll_dice()
-        roll2 = roll_dice()
+        roll1 = 6
+        roll2 = 5
         print(self.current_player.name + "Rolled " + str(roll1) + " " + str(roll2))
         # The end game checker is not working and there may be issues with min black and white for later also white issues
         if len(self.board.valid_moves(self.current_player.colour, roll1)) == 0 and \
